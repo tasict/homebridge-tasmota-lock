@@ -19,7 +19,7 @@ function TasmotaLock (log, config) {
   this.autoLockDelay = config.autoLockDelay || 10
 
   this.manufacturer = config.manufacturer || packageJson.author.name
-  this.serial = config.serial || this.apiroute
+  this.serial = config.serial || this.name
   this.model = config.model || packageJson.name
   this.firmware = config.firmware || packageJson.version
 
