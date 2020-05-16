@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tasmota-lock",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This is a plugin for homebridge which makes it lock device with Tasmota firmware through HTTP only",
   "main": "index.js",
   "engines": {

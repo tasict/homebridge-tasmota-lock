@@ -62,7 +62,7 @@ TasmotaLock.prototype = {
   },
 
   _getStatus: function (callback) {
-    var url = this.hostname + '/cm?cmnd=power'
+    var url = 'http://' + this.hostname + '/cm?cmnd=power'
     this.log.debug('Getting status: %s', url)
 
     this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
@@ -92,7 +92,7 @@ TasmotaLock.prototype = {
 
     var cmd = value ? (this.negative ? "off" : "on") : (this.negative ? "on" : "off")
 
-    var url = this.apiroute + '/cm?cmnd=Power%20' + cmd
+    var url = 'http://' + this.hostname + '/cm?cmnd=Power%20' + cmd
     this.log.debug('Setting state: %s', url)
 
     this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
