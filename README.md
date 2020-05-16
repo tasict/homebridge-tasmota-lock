@@ -39,7 +39,6 @@
 | Key | Description | Default |
 | --- | --- | --- |
 | `timeout` _(optional)_ | Time (in milliseconds) until the accessory will be marked as _Not Responding_ if it is unreachable | `3000` |
-| `http_method` _(optional)_ | HTTP method used to communicate with the device | `GET` |
 | `username` _(optional)_ | Username if HTTP authentication is enabled | N/A |
 | `password` _(optional)_ | Password if HTTP authentication is enabled | N/A |
 | `model` _(optional)_ | Appears under the _Model_ field for the accessory | plugin |
