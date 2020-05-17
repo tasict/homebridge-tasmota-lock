@@ -14,9 +14,8 @@ function TasmotaLock (log, config) {
   this.name = config.name
   this.hostname = config.hostname
   this.negative = config.negative || false
+  this.updateLockDelay = config.updateLockDelay || 10
 
-  this.autoLock = config.autoLock || false
-  this.autoLockDelay = config.autoLockDelay || 10
 
   this.manufacturer = config.manufacturer || packageJson.author.name
   this.serial = config.serial || this.name
@@ -26,7 +25,6 @@ function TasmotaLock (log, config) {
   this.username = config.username || null
   this.password = config.password || null
   this.timeout = config.timeout || 5000
-  this.http_method = 'GET'
 
   this.pollInterval = config.pollInterval || 120
 
@@ -51,7 +49,7 @@ TasmotaLock.prototype = {
     request({
       url: url,
       body: body,
-      method: this.http_method,
+      method: 'GET',
       timeout: this.timeout,
       rejectUnauthorized: false,
       auth: this.auth
@@ -73,10 +71,10 @@ TasmotaLock.prototype = {
       } else {
         this.log.debug('Device response: %s', responseBody)
         var json = JSON.parse(responseBody)
-        var state = (json.POWER == "ON")
+        var state = (json.POWER === "ON") ? 1 : 0;
 
         if(this.negative) {
-          state = !state;
+          state = (state === 1 ? 0 : 1)
         }
 
 
@@ -95,27 +93,27 @@ TasmotaLock.prototype = {
     var url = 'http://' + this.hostname + '/cm?cmnd=Power%20' + cmd
     this.log.debug('Setting state: %s', url)
 
-    this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
+    this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
       if (error) {
         this.log.warn('Error setting state: %s', error.message)
         callback(error)
       } else {
         this.log('Set state to %s', value)
         this.service.getCharacteristic(Characteristic.LockCurrentState).updateValue(value)
-        if (value === 1 && this.autoLock) {
-          this.autoLockFunction()
-        }
+
+        this.updateLockFunction()
+
         callback()
       }
     }.bind(this))
   },
 
-  autoLockFunction: function () {
-    this.log('Waiting %s seconds for autolock', this.autoLockDelay)
+  updateLockFunction: function () {
+    this.log('Waiting %s seconds for update lock status', this.updateLockDelay)
     setTimeout(() => {
-      this.service.setCharacteristic(Characteristic.LockTargetState, 1)
-      this.log('Autolocking...')
-    }, this.autoLockDelay * 1000)
+      this._getStatus(function () {})
+      this.log('update locking...')
+    }, this.updateLockDelay * 1000)
   },
 
   getServices: function () {
